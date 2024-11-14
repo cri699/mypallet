@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Feature;
+namespace Tests\Unit\TransportUnit;
 
 use App\Enums\TransportType;
 use App\Models\TransportUnit;
