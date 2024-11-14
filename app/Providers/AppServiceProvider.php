@@ -2,8 +2,10 @@
 
 namespace App\Providers;
 
+use App\Exceptions\Handler;
 use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -12,7 +14,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        $this->app->singleton(ExceptionHandler::class, Handler::class);
     }
 
     /**
