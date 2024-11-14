@@ -10,7 +10,7 @@ class TransportUnitIndexRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'search' => 'string|max:255',
+            'search' => 'nullable|string|max:255',
             'type' => ['required', 'string', 'in:' . implode(',', TransportType::values())],
         ];
     }
