@@ -1,7 +1,7 @@
 <template>
     <div class="mb-4">
         <input
-            v-model="form.name"
+            v-model="name"
             placeholder="Name"
             class="border p-2 mb-2 text-black"
         />
@@ -16,39 +16,49 @@
 </template>
 
 <script setup lang="ts">
-import {computed, ref} from 'vue';
-import {TransportType, TransportUnit} from "@/Models/TransportUnit";
+import {ref} from 'vue'; // Import `ref` to create reactive variables
 import {useDashboardStore} from "@/Stores/DashboardStore";
+import {TransportUnit} from "@/Models/TransportUnit"; // Vue store for managing dashboard state
 
+// Access the dashboard store for managing transport unit actions
 const dashboardStore = useDashboardStore();
 
-const emit = defineEmits(['created']);
+// Reactive form object to capture input data for the transport unit
+const name = ref<string>("");
 
-const form = ref<TransportUnit>({ name: '', type: dashboardStore.getType });
+// Reactive object to store validation error messages
 const errors = ref<Record<string, string | string[]>>({});
 
+/**
+ * Handles the creation of a new transport unit.
+ * - Sends the form data to the store.
+ * - Resets the form and errors on success.
+ * - Emits the 'created' event to notify the parent component.
+ */
 const createTransportUnit = () => {
-  form.value = {
-    ...form.value,
-    type:dashboardStore.getType
-  }
-    dashboardStore.createTransportUnit(form.value)
+    // Create transportUnit Object for creation
+    const transportUnit: TransportUnit = {
+        name: name.value,
+        type: dashboardStore.getType
+    }
+
+    // Attempt to create the transport unit via the store
+    dashboardStore.createTransportUnit(transportUnit)
         .then(() => {
-            errors.value = {};
+            errors.value = {}; // Clear errors on success
 
-            // Reset form on success
-            form.value = { name: '', type: dashboardStore.getType };
-
-            // Emit an event to notify the parent component (e.g., Dashboard.vue) of the creation
-            emit('created');
+            // Reset the name field
+            name.value = '';
         })
         .catch((error: any) => {
             if (error.response && error.response.status === 422) {
-                // Handle validation errors
+                // Handle validation errors from the backend
                 errors.value = error.response.data.errors;
             } else {
+                // Log unexpected errors
                 console.error('An unexpected error occurred:', error);
             }
         });
 };
 </script>
+
